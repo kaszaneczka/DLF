@@ -3,8 +3,13 @@ import cv2
 import time
 asd = cv2.imread('frame25.jpg')[900:1000,200:500]
 asd = cv2.cvtColor(asd,cv2.COLOR_BGR2GRAY)
-#cv2.imshow('aaa',asd)
-#cv2.waitKey(0)
+# print(asd.shape)
+#asd = np.moveaxis(asd, -1, 0)
+#print(asd.shape)
+
+# cv2.imshow('aaa',asd)
+# cv2.waitKey(0)
+
 
 
 
@@ -16,7 +21,11 @@ class conv:
         self.kernel_size = kernel_size
 
         self.depth = depth
-        self.tablica2d = np.array([zdj])
+        if len(zdj.shape) == 3:
+            aa = np.moveaxis(zdj, -1, 0)
+            self.tablica2d = np.array(aa)
+        elif len(zdj.shape) == 2 :
+            self.tablica2d = np.array([zdj])
 
         self.all_kernels = []
         self.tablica3d = np.array([])
@@ -27,18 +36,27 @@ class conv:
 
     def gen_kernels(self):
         b = 0
-        for a in range(self.depth * self.count_kernels):
 
-            if b == 0 :
+
+        for a in range(self.depth * self.count_kernels):
+            #
+            # if b < self.count_kernels :
+            if len(self.tablica2d.shape) == 3:
+
                 self.kernels_shape = (self.dim_in,self.kernel_size, self.kernel_size)
                 self.kernels = np.random.randn(*self.kernels_shape)
                 self.all_kernels.append(self.kernels)
-                b +=1
+                # b +=1
+                # else:
+                #     self.kernels_shape = ( self.kernel_size, self.kernel_size,self.dim_in)
+                #     self.kernels = np.random.randn(*self.kernels_shape)
+                #     self.all_kernels.append(self.kernels)
+                #     b += 1
             else :
                 self.kernels_shape = (self.count_kernels, self.kernel_size, self.kernel_size)
                 self.kernels = np.random.randn(*self.kernels_shape)
                 self.all_kernels.append(self.kernels)
-        self.all_kernels = (self.all_kernels)
+        #self.all_kernels = (self.all_kernels)
 
 
 
@@ -54,10 +72,14 @@ class conv:
         return np.array([tablica2d_help])
 
     def calculate(self):
+
         for b in range(self.count_kernels):
+            print(self.tablica2d.shape)
             for a in range(self.count_kernels):
                 for c in range(np.array(self.tablica2d).shape[0]):
-                    self.tablica3d = np.append(self.tablica3d,[self.dot_prod(self.all_kernels[a + b*3][c],
+                    print(1)
+                    self.tablica3d = np.append(self.tablica3d,
+                                               [self.dot_prod(self.all_kernels[a + b*3][c],
                                                         self.tablica2d[c])])
 
 
@@ -73,14 +95,48 @@ class conv:
             self.tablica3d = np.array([])
             self.tablica3d_pomoc2 = np.array([])
 
+            print(self.tablica2d.shape)
+
+
         return self.tablica2d.flatten()
 
 
-aa = conv(asd,3,3,1)
+
+    def add_padding(self):
+
+        zeros_col = np.zeros((1, self.tablica2d.shape[1]), dtype=np.uint8)
+
+        for a in range(self.kernel_size - 1):
+            self.tablica2d = np.array([np.append(self.tablica2d[0], zeros_col.T, axis=1)])
+            self.tablica2d = np.array([np.append(zeros_col.T,self.tablica2d[0], axis=1)])
+
+
+        zeros_row = np.zeros((1,self.tablica2d.shape[2]),dtype=np.uint8)
+
+        for a in range(self.kernel_size - 1):
+            self.tablica2d = np.array([np.append(self.tablica2d[0], zeros_row, axis=0)])
+            self.tablica2d = np.array([np.append(zeros_row, self.tablica2d[0], axis=0)])
+
+        print(self.tablica2d )
+
+
+
+
+
+
+aa = conv(asd,4,4,3)
 # cv2.imshow('aaa',asd)
 # cv2.waitKey(0)
+aa.add_padding()
+print(aa.all_kernels[0].shape)
+print(len(aa.all_kernels))
 print(aa.calculate())
-print(aa.calculate())
+#aa.add_padding()
+
+
+
+
+#print(aa.calculate())
 
 
 
