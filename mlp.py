@@ -83,8 +83,6 @@ class Layer:
 
     def predict(self, X):
 
-
-
         # for i in range(len(X)):
         #     wyjscie = X[i].reshape(1, -1)
         #     for j in self.warstwa:
@@ -100,3 +98,4 @@ class Layer:
             wyjsciee.append(wyjscie)
         return np.where(np.array(wyjsciee) > 0.5, 1, 0)
 
+#koment
