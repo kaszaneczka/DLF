@@ -43,11 +43,11 @@ class Model:
                 for j in self.warstwa:
                     wyjscie = j.forward(wyjscie)
 
-                #blad = 2 * (wyjscie - np.array([Y[i*batch:i*batch+batch]]).T)/Y.size
-                print(wyjscie,np.array([Y[i*batch:i*batch+batch]]).T,Y.size,'ddddddd')
-                blad = (np.sum((wyjscie - np.array([Y[i*batch:i*batch+batch]]).T)**2))/batch
-                blad1 = mse(wyjscie,Y[i*batch:i*batch+batch]).numpy()
-                print(blad,blad1)
+                blad = 2 * (wyjscie - np.array([Y[i*batch:i*batch+batch]]).T)/Y.size
+                # print(wyjscie,np.array([Y[i*batch:i*batch+batch]]).T,Y.size,'ddddddd')
+                # blad = (np.sum((wyjscie - np.array([Y[i*batch:i*batch+batch]]).T)**2))/batch
+                # blad1 = mse(wyjscie,Y[i*batch:i*batch+batch]).numpy()
+                # print(blad,blad1)
                 # print(blad, 'blad')
                 for j in reversed(self.warstwa):
                     blad = j.backward(blad, eta=eta)
